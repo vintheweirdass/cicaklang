@@ -1,0 +1,17 @@
+import {
+    std.{
+        fs.File,
+        path
+    },
+    core.parser,
+}
+pub struct Person {
+    pub name String
+    pub parents Vec<Hi>
+}
+pub trait 
+#[if(platform == "windows")]
+func main() {
+    let file File = File:new(path.join(".", "file.txt"));
+    print(format!("{file}"))
+}

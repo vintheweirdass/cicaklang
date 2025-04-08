@@ -1,0 +1,15 @@
+[package]
+name = "cicaklang"
+version = "0.1.0"
+edition = "2024"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+ansi-parser = { version="0.9.1", default-features=false }
+thiserror = "2.0.12"
+
+[features]
+default = ["std"]
+unstable = []
+std = ["thiserror/std"]
