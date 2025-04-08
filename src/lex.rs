@@ -5,7 +5,7 @@ use crate::{
 use alloc::{string::String, vec::Vec};
 pub fn tokenize<'a>(
     chars: &mut PeekableWithPoint<'a>,
-) -> Result<Vec<LexToken<'a>>, SpannedError<LexError>> {
+) -> Result<Option<Vec<LexToken<'a>>>, SpannedError<LexError>> {
     let mut tokens: Vec<LexToken> = Vec::new();
 
     while let Some(c) = chars.next() {
@@ -54,7 +54,10 @@ pub fn tokenize<'a>(
         }
     }
 
-    return Ok(tokens);
+    if tokens.len()<1 {
+        return Ok(None)
+    }
+    return Ok(Some(tokens));
 }
 pub fn tokenize_ident<'a>(
     chars: &mut PeekableWithPoint<'a>,
@@ -134,7 +137,7 @@ pub fn tokenize_string<'a>(
 }
 pub fn tokenize_number<'a>(
     chars: &mut PeekableWithPoint<'a>,
-) -> Result<&'a str, SpannedError<LexError>> {
+) -> Result<NumberToken<'a>, SpannedError<LexError>> {
     let start: usize = chars.num_into_usize(chars.point.index - 1);
     let mut dot_cap = false;
     while let Some(ch) = chars.peek() {
@@ -152,7 +155,11 @@ pub fn tokenize_number<'a>(
     let end: usize = chars.num_into_usize(chars.point.index);
     let char = &chars.point.content[start..end];
  
-    return Ok(char);
+    return Ok(if dot_cap {
+        NumberToken::Decimal(char)
+    } else {
+        NumberToken::Integer(char)
+    });
 }
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
 pub enum ParenStatus {
@@ -177,13 +184,19 @@ pub enum LexToken<'a> {
     Comma,
     Dot,
     At,
-    Number(&'a str),
+    Number(NumberToken<'a>),
     String(&'a str),
     Ident(&'a str),
     Bracket(ParenStatus),
     Brace(ParenStatus),
     Comparison(ParenSide),
 }
+#[derive(Debug, Clone, Copy, PartialEq, PartialOrd)]
+pub enum NumberToken<'a> {
+    Decimal(&'a str),
+    Integer(&'a str)
+}
+
 // #[derive(Debug, Clone, Copy, PartialEq, PartialOrd)]
 // pub enum NumberToken {
 //     Usize(usize),

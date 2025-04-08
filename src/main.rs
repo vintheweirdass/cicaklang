@@ -1,6 +1,6 @@
 use cicaklang::{lex::tokenize, util::PeekableWithPoint};
 fn main() {
-    match tokenize(&mut PeekableWithPoint::new("\"oo\"o023023 200.000")) {
+    match tokenize(&mut PeekableWithPoint::new("\"\"")) {
         Ok(tokens) => { println!("{:#?}", tokens) }
         Err(e) => {
             eprintln!("{}", e);
